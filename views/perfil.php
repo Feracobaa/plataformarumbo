@@ -16,7 +16,7 @@ $password = '123456789';
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch(PDOException $e) {
+} catch (PDOException $e) {
     die("Error de conexión: " . $e->getMessage());
 }
 
@@ -33,34 +33,35 @@ if (!$user) {
 }
 
 // Función para obtener estadísticas según el rol
-function getStatistics($pdo, $user_id, $role) {
+function getStatistics($pdo, $user_id, $role)
+{
     $stats = [];
-    
-    switch($role) {  
+
+    switch ($role) {
         case 'profesor':
             // Exámenes creados
             $stmt = $pdo->prepare("SELECT COUNT(*) as total_examenes FROM examenes WHERE admin_id = ?");
             $stmt->execute([$user_id]);
             $stats['examenes_creados'] = $stmt->fetch()['total_examenes'];
-            
+
             // Total de preguntas creadas
             $stmt = $pdo->prepare("SELECT COUNT(*) as total_preguntas FROM preguntas p JOIN examenes e ON p.examen_id = e.id WHERE e.admin_id = ?");
             $stmt->execute([$user_id]);
             $stats['preguntas_creadas'] = $stmt->fetch()['total_preguntas'];
-            
+
             // Estudiantes que han tomado sus exámenes
             $stmt = $pdo->prepare("SELECT COUNT(DISTINCT estudiante_id) as total_estudiantes FROM resultados r JOIN examenes e ON r.examen_id = e.id WHERE e.admin_id = ?");
             $stmt->execute([$user_id]);
             $stats['estudiantes_activos'] = $stmt->fetch()['total_estudiantes'];
-            
+
             // Últimos exámenes creados
             $stmt = $pdo->prepare("SELECT titulo, descripcion, created_at FROM examenes WHERE admin_id = ? ORDER BY created_at DESC LIMIT 5");
             $stmt->execute([$user_id]);
             $stats['ultimos_examenes'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
+
             break;
-            case 'admin':
-            // Total de usuarios    
+        case 'admin':
+            // Total de usuarios
             $stmt = $pdo->prepare("SELECT COUNT(*) as total_usuarios FROM usuarios");
             $stmt->execute();
             $stats['total_usuarios'] = $stmt->fetch()['total_usuarios'];
@@ -81,10 +82,10 @@ function getStatistics($pdo, $user_id, $role) {
             $stmt->execute();
             $stats['actividad_reciente'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
             break;
-            
-            
+
+
     }
-    
+
     return $stats;
 }
 
@@ -94,17 +95,17 @@ $stats = getStatistics($pdo, $user_id, $user['role']);
 if ($_POST && isset($_POST['update_profile'])) {
     $nombre = trim($_POST['nombre']);
     $email = trim($_POST['email']);
-    
+
     if (!empty($nombre) && !empty($email)) {
         try {
             $stmt = $pdo->prepare("UPDATE usuarios SET nombre = ?, email = ? WHERE id = ?");
             $stmt->execute([$nombre, $email, $user_id]);
             $success_message = "Perfil actualizado correctamente";
-            
+
             // Actualizar datos del usuario en la variable
             $user['nombre'] = $nombre;
             $user['email'] = $email;
-        } catch(PDOException $e) {
+        } catch (PDOException $e) {
             $error_message = "Error al actualizar: " . $e->getMessage();
         }
     }

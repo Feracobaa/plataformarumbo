@@ -115,7 +115,7 @@ $conn->close();
                 <?php else: ?>
                     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                         <?php foreach ($availableExams as $exam): ?>
-                            <?php 
+                            <?php
                             // Check if exam is new (less than 3 days old)
                             $examDate = new DateTime($exam['created_at']);
                             $now = new DateTime();
@@ -123,7 +123,7 @@ $conn->close();
                             ?>
                             <div class="col">
                                 <div class="card exam-card <?php echo $isNew ? 'new-exam' : ''; ?>">
-                                    <?php if($isNew): ?>
+                                    <?php if ($isNew): ?>
                                         <span class="badge bg-success badge-corner">Nuevo</span>
                                     <?php endif; ?>
                                     <div class="card-body">

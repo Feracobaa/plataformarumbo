@@ -29,18 +29,18 @@ $message = '';
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_role'])) {
     $userId = $_POST['user_id'];
     $newRole = $_POST['role'];
-    
+
     // Prepare and bind
     $stmt = $conn->prepare("UPDATE usuarios SET role = ? WHERE id = ?");
     $stmt->bind_param("si", $newRole, $userId);
-    
+
     // Execute the statement
     if ($stmt->execute()) {
         $message = '<div class="alert alert-success">Rol actualizado correctamente</div>';
     } else {
         $message = '<div class="alert alert-danger">Error al actualizar el rol: ' . $stmt->error . '</div>';
     }
-    
+
     $stmt->close();
 }
 
@@ -125,7 +125,7 @@ $result = $conn->query($sql);
                         <tbody>
                             <?php
                             if ($result->num_rows > 0) {
-                                while($row = $result->fetch_assoc()) {
+                                while ($row = $result->fetch_assoc()) {
                                     echo "<tr>";
                                     echo "<td>" . $row["id"] . "</td>";
                                     echo "<td>" . htmlspecialchars($row["nombre"]) . "</td>";
@@ -138,7 +138,7 @@ $result = $conn->query($sql);
                                     echo "</button>";
                                     echo "</td>";
                                     echo "</tr>";
-                                    
+
                                     // Modal for each user
                                     echo "<div class='modal fade' id='editRoleModal" . $row["id"] . "' tabindex='-1' aria-labelledby='editRoleModalLabel" . $row["id"] . "' aria-hidden='true'>";
                                     echo "<div class='modal-dialog'>";
@@ -170,7 +170,7 @@ $result = $conn->query($sql);
                             } else {
                                 echo "<tr><td colspan='6' class='text-center'>No hay usuarios registrados</td></tr>";
                             }
-                            ?>
+?>
                         </tbody>
                     </table>
                 </div>
@@ -185,6 +185,6 @@ $result = $conn->query($sql);
     <?php
     // Close connection
     $conn->close();
-    ?>
+?>
 </body>
 </html>

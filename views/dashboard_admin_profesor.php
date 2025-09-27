@@ -11,7 +11,8 @@ if ($userRole !== 'admin' && $userRole !== 'profesor') {
 }
 
 // Get exam count for admin or profesor
-function getExamCount($userId) {
+function getExamCount($userId)
+{
     $conn = getDbConnection();
     $stmt = $conn->prepare("SELECT COUNT(*) as count FROM examenes WHERE admin_id = ?");
     $stmt->bind_param("i", $userId);
@@ -19,19 +20,20 @@ function getExamCount($userId) {
     $result = $stmt->get_result();
     $row = $result->fetch_assoc();
     $conn->close();
-    
+
     return $row['count'];
 }
 
 // Get student count for admin or profesor
-function getStudentCount() {
+function getStudentCount()
+{
     $conn = getDbConnection();
     $stmt = $conn->prepare("SELECT COUNT(*) as count FROM usuarios WHERE role = 'estudiante'");
     $stmt->execute();
     $result = $stmt->get_result();
     $row = $result->fetch_assoc();
     $conn->close();
-    
+
     return $row['count'];
 }
 

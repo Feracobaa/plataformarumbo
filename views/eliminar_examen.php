@@ -1,4 +1,5 @@
 <?php
+
 // eliminar_examen.php
 session_start();
 
@@ -20,7 +21,7 @@ $userRole = $_SESSION['user_role'];
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['exam_id'])) {
     $examId = (int)$_POST['exam_id'];
-    
+
     // Verify the exam exists and user has permission to delete it
     if ($userRole === 'admin') {
         // Admin can delete any exam
@@ -31,30 +32,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['exam_id'])) {
         $stmt = $conn->prepare("SELECT id, titulo FROM examenes WHERE id = ? AND admin_id = ?");
         $stmt->bind_param("ii", $examId, $userId);
     }
-    
+
     $stmt->execute();
     $result = $stmt->get_result();
-    
+
     if ($result->num_rows > 0) {
         $exam = $result->fetch_assoc();
-        
+
         // Start transaction
         $conn->begin_transaction();
-        
+
         try {
             // First delete all questions associated with the exam
             $deleteQuestionsStmt = $conn->prepare("DELETE FROM preguntas WHERE examen_id = ?");
             $deleteQuestionsStmt->bind_param("i", $examId);
             $deleteQuestionsStmt->execute();
-            
+
             // Then delete the exam
             $deleteExamStmt = $conn->prepare("DELETE FROM examenes WHERE id = ?");
             $deleteExamStmt->bind_param("i", $examId);
             $deleteExamStmt->execute();
-            
+
             // Commit transaction
             $conn->commit();
-            
+
             // Redirect with success message
             header("Location: crear_examen.php?deleted=1&title=" . urlencode($exam['titulo']));
         } catch (Exception $e) {
@@ -72,4 +73,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['exam_id'])) {
 
 $conn->close();
 exit;
-?>

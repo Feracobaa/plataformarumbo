@@ -12,7 +12,8 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 // Database connection
-function getDbConnection() {
+function getDbConnection()
+{
     $servername = "localhost";
     $username = "root"; // Change as needed
     $password = "123456789"; // Change as needed
@@ -25,7 +26,7 @@ function getDbConnection() {
     if ($conn->connect_error) {
         die("Connection failed: " . $conn->connect_error);
     }
-    
+
     return $conn;
 }
 
@@ -36,7 +37,8 @@ $userName = $_SESSION['user_name'];
 $userEmail = $_SESSION['user_email'];
 
 // Get user registration date
-function getUserData($userId) {
+function getUserData($userId)
+{
     $conn = getDbConnection();
     $stmt = $conn->prepare("SELECT created_at FROM usuarios WHERE id = ?");
     $stmt->bind_param("i", $userId);
@@ -44,16 +46,17 @@ function getUserData($userId) {
     $result = $stmt->get_result();
     $userData = $result->fetch_assoc();
     $conn->close();
-    
+
     $registrationDate = new DateTime($userData['created_at']);
     return $registrationDate->format('d/m/Y H:i');
 }
 
 // Redirect to specific dashboard based on role
-function redirectToDashboard($userRole) {
+function redirectToDashboard($userRole)
+{
     if ($userRole === 'estudiante') {
         header("Location: dashboard_estudiante.php");
-    } else if ($userRole === 'admin' || $userRole === 'profesor') {
+    } elseif ($userRole === 'admin' || $userRole === 'profesor') {
         header("Location: dashboard_admin_profesor.php");
     } else {
         // Default dashboard or error page for unknown roles
@@ -62,7 +65,8 @@ function redirectToDashboard($userRole) {
     exit;
 }
 
-function includeHeader($pageTitle) {
+function includeHeader($pageTitle)
+{
     ?>
     <!DOCTYPE html>
     <html lang="es">
@@ -128,7 +132,8 @@ function includeHeader($pageTitle) {
     <?php
 }
 // Function to include the footer HTML for all dashboards
-function includeFooter() {
+function includeFooter()
+{
     ?>
                 </main>
             </div>
@@ -143,7 +148,8 @@ function includeFooter() {
 }
 
 // Function to display user information card
-function displayUserInfoCard($userName, $userEmail, $userRole, $registrationDate) {
+function displayUserInfoCard($userName, $userEmail, $userRole, $registrationDate)
+{
     ?>
     <div class="col-md-4 mb-4">
         <div class="card">

@@ -11,8 +11,8 @@ if (!isset($_SESSION['user_id']) || !in_array($_SESSION['user_role'], ['admin', 
 
 // Database connection
 $servername = "localhost";
-$username = "root"; 
-$password = "123456789"; 
+$username = "root";
+$password = "123456789";
 $dbname = "examenes_db";
 
 // Create connection
@@ -183,11 +183,15 @@ $conn->close();
                                                 <td><?php echo htmlspecialchars($estudiante['estudiante_name']); ?></td>
                                                 <td><?php echo htmlspecialchars($estudiante['email']); ?></td>
                                                 <td><?php echo $estudiante['total_exams']; ?></td>
-                                                <td class="<?php 
-                                                    if($estudiante['average_score'] >= 80) echo 'score-high';
-                                                    elseif($estudiante['average_score'] >= 60) echo 'score-medium';
-                                                    else echo 'score-low';
-                                                ?>">
+                                                <td class="<?php
+                                                    if ($estudiante['average_score'] >= 80) {
+                                                        echo 'score-high';
+                                                    } elseif ($estudiante['average_score'] >= 60) {
+                                                        echo 'score-medium';
+                                                    } else {
+                                                        echo 'score-low';
+                                                    }
+                                            ?>">
                                                     <?php echo $estudiante['average_score']; ?>%
                                                 </td>
                                                 <td><?php echo $estudiante['passed_exams']; ?></td>

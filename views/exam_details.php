@@ -18,8 +18,8 @@ $examId = intval($_GET['exam_id']);
 
 // Database connection
 $servername = "localhost";
-$username = "root"; 
-$password = "123456789"; 
+$username = "root";
+$password = "123456789";
 $dbname = "examenes_db";
 
 // Create connection
@@ -304,13 +304,13 @@ $conn->close();
                                         <?php endif; ?>
                                         
                                         <div class="row">
-                                            <?php 
+                                            <?php
                                             $options = ['A' => $question['opcion_a'], 'B' => $question['opcion_b'], 'C' => $question['opcion_c'], 'D' => $question['opcion_d']];
-                                            $option_images = ['A' => $question['imagen_opcion_a'], 'B' => $question['imagen_opcion_b'], 'C' => $question['imagen_opcion_c'], 'D' => $question['imagen_opcion_d']];
-                                            
-                                            foreach ($options as $letter => $text): 
-                                                $isCorrect = $question['respuesta_correcta'] == $letter;
-                                            ?>
+                                $option_images = ['A' => $question['imagen_opcion_a'], 'B' => $question['imagen_opcion_b'], 'C' => $question['imagen_opcion_c'], 'D' => $question['imagen_opcion_d']];
+
+                                foreach ($options as $letter => $text):
+                                    $isCorrect = $question['respuesta_correcta'] == $letter;
+                                    ?>
                                                 <div class="col-md-6 mb-2">
                                                     <div class="p-2 border rounded <?php echo $isCorrect ? 'correct-answer' : ''; ?>">
                                                         <strong><?php echo $letter; ?>)</strong> <?php echo htmlspecialchars($text); ?>
@@ -357,15 +357,19 @@ $conn->close();
                                                 <td><?php echo htmlspecialchars($result['estudiante_nombre']); ?></td>
                                                 <td><?php echo htmlspecialchars($result['estudiante_email']); ?></td>
                                                 <td><?php echo date('d/m/Y H:i', strtotime($result['fecha'])); ?></td>
-                                                <td class="<?php 
-                                                    if($result['puntaje'] >= 80) echo 'score-high';
-                                                    elseif($result['puntaje'] >= 60) echo 'score-medium';
-                                                    else echo 'score-low';
-                                                ?>">
+                                                <td class="<?php
+                                            if ($result['puntaje'] >= 80) {
+                                                echo 'score-high';
+                                            } elseif ($result['puntaje'] >= 60) {
+                                                echo 'score-medium';
+                                            } else {
+                                                echo 'score-low';
+                                            }
+                                            ?>">
                                                     <?php echo $result['puntaje']; ?>%
                                                 </td>
                                                 <td>
-                                                    <?php if($result['puntaje'] >= 60): ?>
+                                                    <?php if ($result['puntaje'] >= 60): ?>
                                                         <span class="badge bg-success">Aprobado</span>
                                                     <?php else: ?>
                                                         <span class="badge bg-danger">No Aprobado</span>

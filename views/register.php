@@ -22,30 +22,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT); // Secure password hashing
     $role = "estudiante"; // Rol de estudiante por defecto
-    
+
     // Check if email already exists
     $checkEmail = $conn->prepare("SELECT id FROM usuarios WHERE email = ?");
     $checkEmail->bind_param("s", $email);
     $checkEmail->execute();
     $checkEmail->store_result();
-    
+
     if ($checkEmail->num_rows > 0) {
         $registerMessage = '<div class="alert alert-danger">El email ya está registrado</div>';
     } else {
         // Prepare and bind
         $stmt = $conn->prepare("INSERT INTO usuarios (nombre, email, password, role, created_at) VALUES (?, ?, ?, ?, NOW())");
         $stmt->bind_param("ssss", $nombre, $email, $password, $role);
-        
+
         // Execute the statement
         if ($stmt->execute()) {
             $registerMessage = '<div class="alert alert-success">Registro exitoso. <a href="login.php">Iniciar sesión</a></div>';
         } else {
             $registerMessage = '<div class="alert alert-danger">Error al registrar: ' . $stmt->error . '</div>';
         }
-        
+
         $stmt->close();
     }
-    
+
     $checkEmail->close();
 }
 

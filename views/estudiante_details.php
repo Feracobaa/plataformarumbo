@@ -18,8 +18,8 @@ $estudianteId = intval($_GET['estudiante_id']);
 
 // Database connection
 $servername = "localhost";
-$username = "root"; 
-$password = "123456789"; 
+$username = "root";
+$password = "123456789";
 $dbname = "examenes_db";
 
 // Create connection
@@ -247,16 +247,20 @@ $conn->close();
                                                 <td><?php echo htmlspecialchars($exam['titulo']); ?></td>
                                                 <td><?php echo htmlspecialchars($exam['creator']); ?></td>
                                                 <td><?php echo date('d/m/Y H:i', strtotime($exam['fecha'])); ?></td>
-                                                <td class="<?php 
-                                                    if($exam['puntaje'] >= 80) echo 'score-high';
-                                                    elseif($exam['puntaje'] >= 60) echo 'score-medium';
-                                                    else echo 'score-low';
-                                                ?>">
+                                                <td class="<?php
+                                                    if ($exam['puntaje'] >= 80) {
+                                                        echo 'score-high';
+                                                    } elseif ($exam['puntaje'] >= 60) {
+                                                        echo 'score-medium';
+                                                    } else {
+                                                        echo 'score-low';
+                                                    }
+                                            ?>">
                                                     <?php echo $exam['puntaje']; ?>%
                                                 </td>
                                                 <td><?php echo $exam['total_questions']; ?></td>
                                                 <td>
-                                                    <?php if($exam['puntaje'] >= 60): ?>
+                                                    <?php if ($exam['puntaje'] >= 60): ?>
                                                         <span class="badge bg-success">Aprobado</span>
                                                     <?php else: ?>
                                                         <span class="badge bg-danger">No Aprobado</span>
