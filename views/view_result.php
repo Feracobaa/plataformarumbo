@@ -106,7 +106,7 @@ for ($i = 0; $i < $totalQuestions; $i++) {
     } else {
         // Wrong answer
         $correctOption = $questions[$i]['respuesta_correcta'];
-        $wrongOptions = array_filter($options, function($opt) use ($correctOption) {
+        $wrongOptions = array_filter($options, function ($opt) use ($correctOption) {
             return $opt !== $correctOption;
         });
         $studentAnswers[$i] = $wrongOptions[array_rand($wrongOptions)];
@@ -208,15 +208,19 @@ $conn->close();
                                         <p class="card-text"><strong>Fecha de realización:</strong> <?php echo date('d/m/Y H:i', strtotime($result['fecha'])); ?></p>
                                     </div>
                                     <div class="col-md-4 text-center">
-                                        <div class="score-display <?php 
-                                            if($result['puntaje'] >= 80) echo 'score-high';
-                                            elseif($result['puntaje'] >= 60) echo 'score-medium';
-                                            else echo 'score-low';
-                                        ?>">
+                                        <div class="score-display <?php
+                                            if ($result['puntaje'] >= 80) {
+                                                echo 'score-high';
+                                            } elseif ($result['puntaje'] >= 60) {
+                                                echo 'score-medium';
+                                            } else {
+                                                echo 'score-low';
+                                            }
+?>">
                                             <?php echo number_format($result['puntaje'], 1); ?>%
                                         </div>
                                         <p class="mb-1">
-                                            <?php if($result['puntaje'] >= 60): ?>
+                                            <?php if ($result['puntaje'] >= 60): ?>
                                                 <span class="badge bg-success fs-6">APROBADO</span>
                                             <?php else: ?>
                                                 <span class="badge bg-danger fs-6">NO APROBADO</span>
@@ -269,7 +273,7 @@ $conn->close();
                     </div>
                     <div class="card-body">
                         <?php foreach ($questions as $index => $question): ?>
-                            <?php 
+                            <?php
                             $isCorrect = $studentAnswers[$index] === $question['respuesta_correcta'];
                             $studentAnswer = $studentAnswers[$index];
                             ?>
@@ -292,26 +296,26 @@ $conn->close();
                                     </h6>
                                     
                                     <div class="row">
-                                        <?php 
+                                        <?php
                                         $options = [
                                             'A' => $question['opcion_a'],
-                                            'B' => $question['opcion_b'], 
+                                            'B' => $question['opcion_b'],
                                             'C' => $question['opcion_c'],
                                             'D' => $question['opcion_d']
                                         ];
-                                        ?>
+                            ?>
                                         <?php foreach ($options as $letter => $text): ?>
                                             <div class="col-md-6 mb-2">
-                                                <div class="p-2 rounded border <?php 
-                                                    if ($letter === $question['respuesta_correcta']) {
-                                                        echo 'option-correct';
-                                                    } elseif ($letter === $studentAnswer && $letter !== $question['respuesta_correcta']) {
-                                                        echo 'option-wrong';
-                                                    }
-                                                    if ($letter === $studentAnswer) {
-                                                        echo ' option-selected';
-                                                    }
-                                                ?>">
+                                                <div class="p-2 rounded border <?php
+                                        if ($letter === $question['respuesta_correcta']) {
+                                            echo 'option-correct';
+                                        } elseif ($letter === $studentAnswer && $letter !== $question['respuesta_correcta']) {
+                                            echo 'option-wrong';
+                                        }
+                                            if ($letter === $studentAnswer) {
+                                                echo ' option-selected';
+                                            }
+                                            ?>">
                                                     <strong><?php echo $letter; ?>)</strong> 
                                                     <?php echo htmlspecialchars($text); ?>
                                                     <?php if ($letter === $question['respuesta_correcta']): ?>

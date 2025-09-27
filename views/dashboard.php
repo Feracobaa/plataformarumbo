@@ -1,4 +1,5 @@
 <?php
+
 // dashboard.php
 // Este archivo actúa como punto de entrada y redirige al usuario al dashboard correspondiente
 
@@ -24,4 +25,3 @@ if ($userRole === 'estudiante') {
     header("Location: dashboard_estudiante.php");
 }
 exit;
-?>

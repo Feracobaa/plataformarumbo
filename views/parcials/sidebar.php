@@ -1,7 +1,7 @@
 <?php
 /**
  * sidebar.php
- * 
+ *
  * Descripción: Barra lateral de navegación según rol de usuario
  */
 $currentPage = basename($_SERVER['PHP_SELF']);
@@ -18,7 +18,7 @@ $rol = $_SESSION['usuario']['rol'];
                 </a>
             </li>
             
-            <?php if($rol === 'admin'): ?>
+            <?php if ($rol === 'admin'): ?>
                 <li class="nav-item">
                     <a class="nav-link<?= $currentPage == 'usuarios.php' ? ' active' : '' ?>" href="usuarios.php">
                         <i class="fas fa-users me-2"></i>
@@ -39,7 +39,7 @@ $rol = $_SESSION['usuario']['rol'];
                 </li>
             <?php endif; ?>
             
-            <?php if($rol === 'profesor'): ?>
+            <?php if ($rol === 'profesor'): ?>
                 <li class="nav-item">
                     <a class="nav-link<?= $currentPage == 'examenes.php' ? ' active' : '' ?>" href="examenes.php">
                         <i class="fas fa-file-alt me-2"></i>
@@ -60,7 +60,7 @@ $rol = $_SESSION['usuario']['rol'];
                 </li>
             <?php endif; ?>
             
-            <?php if($rol === 'estudiante'): ?>
+            <?php if ($rol === 'estudiante'): ?>
                 <li class="nav-item">
                     <a class="nav-link<?= $currentPage == 'mis_examenes.php' ? ' active' : '' ?>" href="mis_examenes.php">
                         <i class="fas fa-tasks me-2"></i>

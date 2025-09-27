@@ -11,7 +11,9 @@ if (!isset($_SESSION['user_id']) || !in_array($_SESSION['user_role'], ['admin', 
 
 // Database connection
 $conn = new mysqli("localhost", "root", "123456789", "examenes_db");
-if ($conn->connect_error) die("Connection failed: " . $conn->connect_error);
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
 $conn->set_charset("utf8");
 
 $userId = intval($_SESSION['user_id']);
@@ -35,7 +37,8 @@ $totalQuestions = 0;
 $examId = 0;
 
 // Function to calculate remaining time
-function getRemainingTime($startTime, $timeLimitMinutes) {
+function getRemainingTime($startTime, $timeLimitMinutes)
+{
     $elapsed = time() - $startTime;
     $totalSeconds = $timeLimitMinutes * 60;
     return max(0, $totalSeconds - $elapsed);
@@ -44,23 +47,23 @@ function getRemainingTime($startTime, $timeLimitMinutes) {
 // Function to save answer via AJAX
 if (isset($_POST['ajax_save_answer'])) {
     header('Content-Type: application/json');
-    
+
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
         echo json_encode(['success' => false, 'error' => 'Invalid CSRF token']);
         exit;
     }
-    
+
     $examId = intval($_POST['exam_id']);
     $questionNum = intval($_POST['question_num']);
     $answer = $_POST['answer'] ?? '';
-    
+
     if (!isset($_SESSION['exam_answers_' . $examId])) {
         $_SESSION['exam_answers_' . $examId] = [];
     }
-    
+
     $_SESSION['exam_answers_' . $examId][$questionNum] = $answer;
     $_SESSION['current_question_' . $examId] = $questionNum;
-    
+
     echo json_encode(['success' => true]);
     exit;
 }
@@ -68,13 +71,13 @@ if (isset($_POST['ajax_save_answer'])) {
 // Validate exam_id
 if (isset($_GET['exam_id']) && is_numeric($_GET['exam_id'])) {
     $examId = intval($_GET['exam_id']);
-    
+
     // First verify exam exists
     $stmt = $conn->prepare("SELECT id, titulo, descripcion FROM examenes WHERE id = ?");
     $stmt->bind_param("i", $examId);
     $stmt->execute();
     $result = $stmt->get_result();
-    
+
     if ($result->num_rows === 0) {
         $message = "El examen especificado no existe.";
         $messageType = "danger";
@@ -82,14 +85,14 @@ if (isset($_GET['exam_id']) && is_numeric($_GET['exam_id'])) {
     } else {
         $examData = $result->fetch_assoc();
         $stmt->close();
-        
+
         // Check attempts BEFORE allowing access
         $stmt = $conn->prepare("SELECT COUNT(*) as attempt_count FROM resultados WHERE estudiante_id = ? AND examen_id = ?");
         $stmt->bind_param("ii", $userId, $examId);
         $stmt->execute();
         $attemptCount = $stmt->get_result()->fetch_assoc()['attempt_count'];
         $stmt->close();
-        
+
         if ($attemptCount >= 2) {
             $message = "Has agotado el número máximo de intentos (2) para este examen.";
             $messageType = "warning";
@@ -100,37 +103,37 @@ if (isset($_GET['exam_id']) && is_numeric($_GET['exam_id'])) {
             $stmt->execute();
             $questions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             $stmt->close();
-            
+
             if (empty($questions)) {
                 $message = "Este examen no tiene preguntas configuradas.";
                 $messageType = "warning";
             } else {
                 $takingExam = true;
                 $totalQuestions = count($questions);
-                
+
                 // Initialize exam session if not exists
                 if (!isset($_SESSION['exam_start_time_' . $examId])) {
                     $_SESSION['exam_start_time_' . $examId] = time();
                     $_SESSION['exam_answers_' . $examId] = [];
                     $_SESSION['current_question_' . $examId] = 1;
                 }
-                
+
                 // Check if time has expired
                 $remainingTime = getRemainingTime($_SESSION['exam_start_time_' . $examId], $examTimeLimit);
                 if ($remainingTime <= 0) {
                     // Auto-submit exam
                     $userAnswers = $_SESSION['exam_answers_' . $examId] ?? [];
                     $score = 0;
-                    
+
                     foreach ($questions as $index => $question) {
                         $questionNum = $index + 1;
                         if (isset($userAnswers[$questionNum]) && $userAnswers[$questionNum] === $question['respuesta_correcta']) {
                             $score++;
                         }
                     }
-                    
+
                     $percentageScore = ($score / $totalQuestions) * 100;
-                    
+
                     // Use transaction for data integrity
                     $conn->begin_transaction();
                     try {
@@ -138,19 +141,19 @@ if (isset($_GET['exam_id']) && is_numeric($_GET['exam_id'])) {
                         $stmt->bind_param("iid", $userId, $examId, $percentageScore);
                         $stmt->execute();
                         $stmt->close();
-                        
+
                         $conn->commit();
-                        
+
                         $message = "Tiempo agotado. Examen enviado automáticamente. Puntuación: $score/$totalQuestions (" . number_format($percentageScore, 2) . "%)";
                         $messageType = "warning";
                         $takingExam = false;
                         $examCompleted = true;
-                        
+
                         // Clear session data
                         unset($_SESSION['exam_answers_' . $examId]);
                         unset($_SESSION['current_question_' . $examId]);
                         unset($_SESSION['exam_start_time_' . $examId]);
-                        
+
                     } catch (Exception $e) {
                         $conn->rollback();
                         $message = "Error al procesar el examen: " . htmlspecialchars($e->getMessage());
@@ -164,18 +167,18 @@ if (isset($_GET['exam_id']) && is_numeric($_GET['exam_id'])) {
                     } else {
                         $currentQuestion = $_SESSION['current_question_' . $examId] ?? 1;
                     }
-                    
+
                     // Handle form submissions
                     if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax_save_answer'])) {
                         if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
                             die("Error de seguridad: Token CSRF inválido");
                         }
-                        
+
                         // Save current answer
                         if (isset($_POST['answer'])) {
                             $_SESSION['exam_answers_' . $examId][$currentQuestion] = $_POST['answer'];
                         }
-                        
+
                         // Navigation
                         if (isset($_POST['next'])) {
                             $currentQuestion = min($currentQuestion + 1, $totalQuestions);
@@ -191,16 +194,16 @@ if (isset($_GET['exam_id']) && is_numeric($_GET['exam_id'])) {
                             // Calculate score
                             $score = 0;
                             $userAnswers = $_SESSION['exam_answers_' . $examId] ?? [];
-                            
+
                             foreach ($questions as $index => $question) {
                                 $questionNum = $index + 1;
                                 if (isset($userAnswers[$questionNum]) && $userAnswers[$questionNum] === $question['respuesta_correcta']) {
                                     $score++;
                                 }
                             }
-                            
+
                             $percentageScore = ($score / $totalQuestions) * 100;
-                            
+
                             // Use transaction
                             $conn->begin_transaction();
                             try {
@@ -208,19 +211,19 @@ if (isset($_GET['exam_id']) && is_numeric($_GET['exam_id'])) {
                                 $stmt->bind_param("iid", $userId, $examId, $percentageScore);
                                 $stmt->execute();
                                 $stmt->close();
-                                
+
                                 $conn->commit();
-                                
+
                                 $message = "Examen completado exitosamente. Puntuación: $score/$totalQuestions (" . number_format($percentageScore, 2) . "%)";
                                 $messageType = "success";
                                 $takingExam = false;
                                 $examCompleted = true;
-                                
+
                                 // Clear session data
                                 unset($_SESSION['exam_answers_' . $examId]);
                                 unset($_SESSION['current_question_' . $examId]);
                                 unset($_SESSION['exam_start_time_' . $examId]);
-                                
+
                             } catch (Exception $e) {
                                 $conn->rollback();
                                 $message = "Error al guardar los resultados: " . htmlspecialchars($e->getMessage());
@@ -255,7 +258,7 @@ if (!$takingExam) {
     $stmt->execute();
     $availableExams = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     $stmt->close();
-    
+
     // Get completed exams
     $stmt = $conn->prepare("
         SELECT e.titulo, r.puntaje, r.fecha,
@@ -335,10 +338,10 @@ $conn->close();
                 </div>
 
                 <!-- Current question -->
-                <?php 
+                <?php
                 $question = $questions[$currentQuestion - 1];
-                $savedAnswer = $_SESSION['exam_answers_' . $examId][$currentQuestion] ?? '';
-                ?>
+    $savedAnswer = $_SESSION['exam_answers_' . $examId][$currentQuestion] ?? '';
+    ?>
                 
                 <form method="post" id="question-form">
                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
@@ -388,8 +391,8 @@ $conn->close();
                 <h6>Navegador de preguntas:</h6>
                 <div class="d-flex flex-wrap gap-2">
                     <?php for ($i = 1; $i <= $totalQuestions; $i++): ?>
-                        <?php 
-                        $answered = isset($_SESSION['exam_answers_' . $examId][$i]);
+                        <?php
+            $answered = isset($_SESSION['exam_answers_' . $examId][$i]);
                         $isCurrent = ($i == $currentQuestion);
                         $btnClass = $isCurrent ? 'btn-primary' : ($answered ? 'btn-success' : 'btn-outline-secondary');
                         ?>

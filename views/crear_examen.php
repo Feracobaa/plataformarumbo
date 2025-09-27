@@ -50,11 +50,14 @@ if (!isset($_SESSION['user_id']) || !in_array($_SESSION['user_role'], ['admin', 
 
 // Database connection
 $conn = null;
-function getDbConnection() {
+function getDbConnection()
+{
     global $conn;
     if ($conn === null) {
         $conn = new mysqli('localhost', 'root', '123456789', 'examenes_db');
-        if ($conn->connect_error) die("Error de conexión: " . $conn->connect_error);
+        if ($conn->connect_error) {
+            die("Error de conexión: " . $conn->connect_error);
+        }
         $conn->set_charset("utf8mb4");
     }
     return $conn;
@@ -64,7 +67,8 @@ $userId = $_SESSION['user_id'];
 $userRole = $_SESSION['user_role'];
 
 // Helper function for alerts
-function displayAlert($message, $type = 'info') {
+function displayAlert($message, $type = 'info')
+{
     return "<div class='alert alert-$type alert-dismissible fade show' role='alert'>
                 $message
                 <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
@@ -82,7 +86,7 @@ $editingQuestion = null;
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['create_exam'])) {
     $titulo = htmlspecialchars(trim($_POST['titulo']));
     $descripcion = htmlspecialchars(trim($_POST['descripcion']));
-    
+
     if (empty($titulo) || empty($descripcion)) {
         $message = displayAlert('Por favor, complete todos los campos obligatorios.', 'danger');
     } else {
@@ -90,7 +94,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['create_exam'])) {
         try {
             $stmt = $conn->prepare("INSERT INTO examenes (titulo, descripcion, admin_id, created_at) VALUES (?, ?, ?, NOW())");
             $stmt->bind_param("ssi", $titulo, $descripcion, $userId);
-            
+
             if ($stmt->execute()) {
                 $examId = $conn->insert_id;
                 $conn->commit();
@@ -117,20 +121,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_question'])) {
         'D' => htmlspecialchars(trim($_POST['opcion_d']))
     ];
     $respuestaCorrecta = $_POST['respuesta_correcta'];
-    
+
     if (empty($enunciado) || in_array('', $opciones, true)) {
         $message = displayAlert('Por favor, complete todos los campos de la pregunta.', 'danger');
     } else {
         // Verify exam exists and user has permission (admin can edit all exams)
         $whereClause = $userRole === 'admin' ? "WHERE id = ?" : "WHERE id = ? AND admin_id = ?";
         $stmt = $conn->prepare("SELECT id FROM examenes $whereClause");
-        
+
         if ($userRole === 'admin') {
             $stmt->bind_param("i", $examId);
         } else {
             $stmt->bind_param("ii", $examId, $userId);
         }
-        
+
         $stmt->execute();
         if ($stmt->get_result()->num_rows === 0) {
             $message = displayAlert('No tiene permisos para modificar este examen.', 'danger');
@@ -139,7 +143,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_question'])) {
             $stmt = $conn->prepare("INSERT INTO preguntas (examen_id, enunciado, opcion_a, opcion_b, opcion_c, opcion_d, respuesta_correcta, created_at) 
                                   VALUES (?, ?, ?, ?, ?, ?, ?, NOW())");
             $stmt->bind_param("issssss", $examId, $enunciado, $opciones['A'], $opciones['B'], $opciones['C'], $opciones['D'], $respuestaCorrecta);
-            
+
             if ($stmt->execute()) {
                 header("Location: crear_examen.php?exam_id=$examId&success=1");
                 exit;
@@ -163,28 +167,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_question'])) {
         'D' => trim($_POST['opcion_d'])
     ];
     $respuestaCorrecta = $_POST['respuesta_correcta'];
-    
+
     // Enhanced validation
     $errors = [];
-    if (empty($enunciado)) $errors[] = "El enunciado es requerido";
-    foreach ($opciones as $key => $opcion) {
-        if (empty($opcion)) $errors[] = "La opción $key es requerida";
+    if (empty($enunciado)) {
+        $errors[] = "El enunciado es requerido";
     }
-    if (empty($respuestaCorrecta)) $errors[] = "Debe seleccionar la respuesta correcta";
-    
+    foreach ($opciones as $key => $opcion) {
+        if (empty($opcion)) {
+            $errors[] = "La opción $key es requerida";
+        }
+    }
+    if (empty($respuestaCorrecta)) {
+        $errors[] = "Debe seleccionar la respuesta correcta";
+    }
+
     if (empty($errors)) {
         // Simplified permission check
-        $permissionQuery = $userRole === 'admin' ? 
+        $permissionQuery = $userRole === 'admin' ?
             "SELECT p.id FROM preguntas p JOIN examenes e ON p.examen_id = e.id WHERE p.id = ? AND p.examen_id = ?" :
             "SELECT p.id FROM preguntas p JOIN examenes e ON p.examen_id = e.id WHERE p.id = ? AND p.examen_id = ? AND e.admin_id = ?";
-        
+
         $stmt = $conn->prepare($permissionQuery);
         if ($userRole === 'admin') {
             $stmt->bind_param("ii", $questionId, $examId);
         } else {
             $stmt->bind_param("iii", $questionId, $examId, $userId);
         }
-        
+
         $stmt->execute();
         if ($stmt->get_result()->num_rows === 0) {
             $message = displayAlert('No tiene permisos para modificar esta pregunta.', 'danger');
@@ -195,9 +205,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_question'])) {
                                        enunciado = ?, opcion_a = ?, opcion_b = ?, opcion_c = ?, 
                                        opcion_d = ?, respuesta_correcta = ?, updated_at = NOW()
                                        WHERE id = ?");
-                $stmt->bind_param("ssssssi", $enunciado, $opciones['A'], $opciones['B'], 
-                                 $opciones['C'], $opciones['D'], $respuestaCorrecta, $questionId);
-                
+                $stmt->bind_param(
+                    "ssssssi",
+                    $enunciado,
+                    $opciones['A'],
+                    $opciones['B'],
+                    $opciones['C'],
+                    $opciones['D'],
+                    $respuestaCorrecta,
+                    $questionId
+                );
+
                 if ($stmt->execute()) {
                     $conn->commit();
                     header("Location: crear_examen.php?exam_id=$examId&success=2");
@@ -247,16 +265,16 @@ if (isset($_GET['deleted']) && $_GET['deleted'] == 1) {
 if ($examId) {
     $whereClause = $userRole === 'admin' ? "WHERE id = ?" : "WHERE id = ? AND admin_id = ?";
     $stmt = $conn->prepare("SELECT titulo, descripcion, admin_id FROM examenes $whereClause");
-    
+
     if ($userRole === 'admin') {
         $stmt->bind_param("i", $examId);
     } else {
         $stmt->bind_param("ii", $examId, $userId);
     }
-    
+
     $stmt->execute();
     $result = $stmt->get_result();
-    
+
     if ($result->num_rows > 0) {
         $examDetails = $result->fetch_assoc();
     } else {
@@ -267,23 +285,23 @@ if ($examId) {
 
 // Get question to edit
 if ($editingQuestionId && $examId) {
-    $whereClause = $userRole === 'admin' ? 
-        "p.id = ? AND p.examen_id = ?" : 
+    $whereClause = $userRole === 'admin' ?
+        "p.id = ? AND p.examen_id = ?" :
         "p.id = ? AND p.examen_id = ? AND e.admin_id = ?";
-    
+
     $stmt = $conn->prepare("SELECT p.* FROM preguntas p 
                            JOIN examenes e ON p.examen_id = e.id 
                            WHERE $whereClause");
-    
+
     if ($userRole === 'admin') {
         $stmt->bind_param("ii", $editingQuestionId, $examId);
     } else {
         $stmt->bind_param("iii", $editingQuestionId, $examId, $userId);
     }
-    
+
     $stmt->execute();
     $result = $stmt->get_result();
-    
+
     if ($result->num_rows > 0) {
         $editingQuestion = $result->fetch_assoc();
     } else {
@@ -535,14 +553,14 @@ $examsResult = $stmt->get_result();
                     <div class="card-body">
                         <?php
                         $stmtQuestions = $conn->prepare("SELECT * FROM preguntas WHERE examen_id = ? ORDER BY id");
-                        $stmtQuestions->bind_param("i", $examId);
-                        $stmtQuestions->execute();
-                        $questionsResult = $stmtQuestions->get_result();
-                        
-                        if ($questionsResult->num_rows > 0): ?>
+$stmtQuestions->bind_param("i", $examId);
+$stmtQuestions->execute();
+$questionsResult = $stmtQuestions->get_result();
+
+if ($questionsResult->num_rows > 0): ?>
                             <div class="row row-cols-1 row-cols-md-2 g-4">
                             <?php $questionNumber = 1;
-                            while ($q = $questionsResult->fetch_assoc()): ?>
+    while ($q = $questionsResult->fetch_assoc()): ?>
                                 <div class="col">
                                     <div class="card h-100 question-preview">
                                         <div class="card-header d-flex justify-content-between align-items-center">
@@ -563,7 +581,7 @@ $examsResult = $stmt->get_result();
                                         <div class="card-body">
                                             <h5 class="card-title"><?= htmlspecialchars($q['enunciado']) ?></h5>
                                             <ul class="list-group mt-3">
-                                                <?php foreach(['A', 'B', 'C', 'D'] as $option): ?>
+                                                <?php foreach (['A', 'B', 'C', 'D'] as $option): ?>
                                                 <li class="list-group-item<?= $q['respuesta_correcta'] === $option ? ' list-group-item-success' : '' ?>">
                                                     <strong><?= $option ?>:</strong> <?= htmlspecialchars($q["opcion_" . strtolower($option)]) ?>
                                                     <?= $q['respuesta_correcta'] === $option ? ' <i class="bi bi-check-circle-fill text-success"></i>' : '' ?>

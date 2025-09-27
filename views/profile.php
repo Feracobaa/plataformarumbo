@@ -41,35 +41,35 @@ if (!file_exists($upload_dir)) {
 $mensaje = "";
 if (isset($_POST['upload_photo']) && isset($_FILES['profile_photo'])) {
     $file = $_FILES['profile_photo'];
-    
+
     // Verificar si hay errores
     if ($file['error'] === UPLOAD_ERR_OK) {
         $temp_name = $file['tmp_name'];
         $name = basename($file['name']);
         $extension = strtolower(pathinfo($name, PATHINFO_EXTENSION));
-        
+
         // Verificar la extensión
         if (in_array($extension, ['jpg', 'jpeg', 'png', 'gif'])) {
             // Crear un nombre único para el archivo
             $new_filename = "user_" . $user_id . "_" . time() . "." . $extension;
             $destination = $upload_dir . $new_filename;
-            
+
             // Mover el archivo cargado
             if (move_uploaded_file($temp_name, $destination)) {
                 // Actualizar la ruta de la foto en la base de datos (agregar columna si no existe)
                 // Este código asume que ya tienes una columna 'foto_perfil' en tu tabla usuarios
                 $sql = "UPDATE usuarios SET foto_perfil = ? WHERE id = ?";
                 $stmt = $conn->prepare($sql);
-                
-                
-                
-                
+
+
+
+
                 $stmt->bind_param("si", $destination, $user_id);
                 $stmt->execute();
                 $stmt->close();
-                
+
                 $mensaje = "Foto de perfil actualizada correctamente.";
-                
+
                 // Refrescar los datos del usuario
                 $sql = "SELECT id, nombre, email, role, created_at, foto_perfil FROM usuarios WHERE id = ?";
                 $stmt = $conn->prepare($sql);
@@ -95,15 +95,15 @@ if (isset($_POST['update_profile']) && $_SESSION['role'] === 'admin') {
     $nombre = $_POST['nombre'];
     $email = $_POST['email'];
     $role = $_POST['role'];
-    
+
     // Actualizar la información del usuario
     $sql = "UPDATE usuarios SET nombre = ?, email = ?, role = ? WHERE id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("sssi", $nombre, $email, $role, $target_user_id);
-    
+
     if ($stmt->execute()) {
         $mensaje = "Perfil de usuario actualizado correctamente.";
-        
+
         // Si se está actualizando el usuario actual, actualizar también los datos de la sesión
         if ($target_user_id == $user_id) {
             $_SESSION['nombre'] = $nombre;
@@ -114,15 +114,15 @@ if (isset($_POST['update_profile']) && $_SESSION['role'] === 'admin') {
         $mensaje = "Error al actualizar el perfil: " . $stmt->error;
     }
     $stmt->close();
-    
+
     // Si también se actualiza la contraseña
     if (!empty($_POST['password'])) {
         $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-        
+
         $sql = "UPDATE usuarios SET password = ? WHERE id = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("si", $password, $target_user_id);
-        
+
         if ($stmt->execute()) {
             $mensaje .= " Contraseña actualizada correctamente.";
         } else {
@@ -137,7 +137,7 @@ $usuarios = [];
 if (isset($user['role']) && $user['role'] === 'admin') {
     $sql = "SELECT id, nombre, email, role, created_at, foto_perfil FROM usuarios";
     $result = $conn->query($sql);
-    
+
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
             $usuarios[] = $row;
@@ -560,10 +560,10 @@ if (isset($user['role']) && $user['role'] === 'admin') {
                 <?php
                 // Mostrar foto de perfil si existe, de lo contrario mostrar avatar predeterminado
                 $profile_image = "https://via.placeholder.com/150";
-                if (isset($user['foto_perfil']) && file_exists($user['foto_perfil'])) {
-                    $profile_image = $user['foto_perfil'];
-                }
-                ?>
+if (isset($user['foto_perfil']) && file_exists($user['foto_perfil'])) {
+    $profile_image = $user['foto_perfil'];
+}
+?>
                 <img src="<?php echo $profile_image; ?>" alt="Foto de perfil" class="profile-photo">
                 <h2 class="profile-name"><?php echo htmlspecialchars($user['nombre']); ?></h2>
                 <span class="profile-role"><?php echo ucfirst(htmlspecialchars($user['role'] ?: 'Estudiante')); ?></span>
@@ -572,28 +572,28 @@ if (isset($user['role']) && $user['role'] === 'admin') {
                     <div class="stat">
                         <div class="stat-number">
                             <?php
-                            // Contar exámenes si es profesor o admin
-                            if ($user['role'] === 'admin' || $user['role'] === 'profesor') {
-                                $sql = "SELECT COUNT(*) as total FROM examenes WHERE admin_id = ?";
-                                $stmt = $conn->prepare($sql);
-                                $stmt->bind_param("i", $user_id);
-                                $stmt->execute();
-                                $result = $stmt->get_result();
-                                $row = $result->fetch_assoc();
-                                echo $row['total'];
-                                $stmt->close();
-                            } else {
-                                // Contar exámenes realizados si es estudiante
-                                $sql = "SELECT COUNT(*) as total FROM resultados WHERE estudiante_id = ?";
-                                $stmt = $conn->prepare($sql);
-                                $stmt->bind_param("i", $user_id);
-                                $stmt->execute();
-                                $result = $stmt->get_result();
-                                $row = $result->fetch_assoc();
-                                echo $row['total'];
-                                $stmt->close();
-                            }
-                            ?>
+            // Contar exámenes si es profesor o admin
+            if ($user['role'] === 'admin' || $user['role'] === 'profesor') {
+                $sql = "SELECT COUNT(*) as total FROM examenes WHERE admin_id = ?";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("i", $user_id);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                $row = $result->fetch_assoc();
+                echo $row['total'];
+                $stmt->close();
+            } else {
+                // Contar exámenes realizados si es estudiante
+                $sql = "SELECT COUNT(*) as total FROM resultados WHERE estudiante_id = ?";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("i", $user_id);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                $row = $result->fetch_assoc();
+                echo $row['total'];
+                $stmt->close();
+            }
+?>
                         </div>
                         <div class="stat-label">
                             <?php echo ($user['role'] === 'admin' || $user['role'] === 'profesor') ? 'Exámenes Creados' : 'Exámenes Realizados'; ?>
@@ -603,10 +603,10 @@ if (isset($user['role']) && $user['role'] === 'admin') {
                     <div class="stat">
                         <div class="stat-number">
                             <?php
-                            // Mostrar la fecha de registro formateada
-                            $created_date = new DateTime($user['created_at']);
-                            echo $created_date->format('d/m/Y');
-                            ?>
+// Mostrar la fecha de registro formateada
+$created_date = new DateTime($user['created_at']);
+echo $created_date->format('d/m/Y');
+?>
                         </div>
                         <div class="stat-label">Miembro desde</div>
                     </div>
@@ -698,10 +698,10 @@ if (isset($user['role']) && $user['role'] === 'admin') {
                                     <td><?php echo htmlspecialchars($usuario['email']); ?></td>
                                     <td><?php echo ucfirst(htmlspecialchars($usuario['role'] ?: 'Estudiante')); ?></td>
                                     <td>
-                                        <?php 
-                                        $date = new DateTime($usuario['created_at']);
-                                        echo $date->format('d/m/Y H:i'); 
-                                        ?>
+                                        <?php
+            $date = new DateTime($usuario['created_at']);
+                                    echo $date->format('d/m/Y H:i');
+                                    ?>
                                     </td>
                                     <td class="user-actions">
                                         <button onclick="openEditModal(<?php echo $usuario['id']; ?>, '<?php echo htmlspecialchars($usuario['nombre']); ?>', '<?php echo htmlspecialchars($usuario['email']); ?>', '<?php echo htmlspecialchars($usuario['role'] ?: 'student'); ?>')" class="btn">

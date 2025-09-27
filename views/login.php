@@ -30,18 +30,18 @@ $messageType = '';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $password = $_POST['password'];
-    
+
     // Prepare and bind
     $stmt = $conn->prepare("SELECT id, nombre, email, password, role FROM usuarios WHERE email = ?");
     $stmt->bind_param("s", $email);
-    
+
     // Execute the statement
     $stmt->execute();
     $result = $stmt->get_result();
-    
+
     if ($result->num_rows === 1) {
         $user = $result->fetch_assoc();
-        
+
         // Verify password
         if (password_verify($password, $user['password'])) {
             // Password is correct, create session
@@ -49,10 +49,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['user_name'] = $user['nombre'];
             $_SESSION['user_email'] = $user['email'];
             $_SESSION['user_role'] = $user['role'];
-            
+
             $loginMessage = 'Iniciando sesión...';
             $messageType = 'success';
-            
+
             // CORRECCIÓN: Cambiar 'views/dashboard.php' por solo 'dashboard.php'
             echo "<script>
                 setTimeout(function() {
@@ -67,7 +67,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $loginMessage = 'Usuario no encontrado';
         $messageType = 'error';
     }
-    
+
     $stmt->close();
 }
 

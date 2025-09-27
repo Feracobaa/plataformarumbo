@@ -1,4 +1,5 @@
 <?php
+
 // eliminar_pregunta.php
 session_start();
 
@@ -21,7 +22,7 @@ $userRole = $_SESSION['user_role'];
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['question_id']) && isset($_POST['exam_id'])) {
     $questionId = (int)$_POST['question_id'];
     $examId = (int)$_POST['exam_id'];
-    
+
     // Verify the question exists and user has permission to delete it
     if ($userRole === 'admin') {
         // Admin can delete any question
@@ -36,15 +37,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['question_id']) && isse
                                WHERE p.id = ? AND p.examen_id = ? AND e.admin_id = ?");
         $stmt->bind_param("iii", $questionId, $examId, $userId);
     }
-    
+
     $stmt->execute();
     $result = $stmt->get_result();
-    
+
     if ($result->num_rows > 0) {
         // Delete the question
         $deleteStmt = $conn->prepare("DELETE FROM preguntas WHERE id = ?");
         $deleteStmt->bind_param("i", $questionId);
-        
+
         if ($deleteStmt->execute()) {
             header("Location: crear_examen.php?exam_id=$examId&success=3");
         } else {
@@ -59,4 +60,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['question_id']) && isse
 
 $conn->close();
 exit;
-?>

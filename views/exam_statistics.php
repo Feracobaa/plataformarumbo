@@ -10,8 +10,8 @@ if (!isset($_SESSION['user_id']) || !in_array($_SESSION['user_role'], ['admin', 
 
 // Database connection
 $servername = "localhost";
-$username = "root"; 
-$password = "123456789"; 
+$username = "root";
+$password = "123456789";
 $dbname = "examenes_db";
 
 // Create connection
@@ -137,7 +137,7 @@ foreach ($examStats as $exam) {
         $examLabels[] = $exam['exam_title'];
         $passRate = ($exam['passed_count'] / $exam['total_attempts']) * 100;
         $failRate = ($exam['failed_count'] / $exam['total_attempts']) * 100;
-        
+
         $passRates[] = round($passRate, 1);
         $failRates[] = round($failRate, 1);
         $avgScores[] = $exam['average_score'];
@@ -394,11 +394,15 @@ $conn->close();
                                                     <?php echo $exam['failed_count']; ?> 
                                                     (<?php echo $exam['total_attempts'] > 0 ? round(($exam['failed_count'] / $exam['total_attempts']) * 100, 1) : 0; ?>%)
                                                 </td>
-                                                <td class="<?php 
-                                                    if($exam['average_score'] >= 80) echo 'score-high';
-                                                    elseif($exam['average_score'] >= 60) echo 'score-medium';
-                                                    else echo 'score-low';
-                                                ?>">
+                                                <td class="<?php
+                                                    if ($exam['average_score'] >= 80) {
+                                                        echo 'score-high';
+                                                    } elseif ($exam['average_score'] >= 60) {
+                                                        echo 'score-medium';
+                                                    } else {
+                                                        echo 'score-low';
+                                                    }
+                                            ?>">
                                                     <?php echo $exam['average_score']; ?>%
                                                 </td>
                                                 <td class="score-high"><?php echo $exam['highest_score']; ?>%</td>

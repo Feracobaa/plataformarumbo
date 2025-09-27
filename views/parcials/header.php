@@ -1,7 +1,7 @@
 <?php
 /**
  * header.php
- * 
+ *
  * Descripción: Template para el encabezado común de todas las páginas
  */
 $currentPage = basename($_SERVER['PHP_SELF']);
@@ -69,7 +69,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
     </style>
 </head>
 <body>
-<?php if(isset($_SESSION['usuario'])): ?>
+<?php if (isset($_SESSION['usuario'])): ?>
 <!-- Navbar para usuarios autenticados -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">

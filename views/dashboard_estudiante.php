@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // dashboard_estudiante.php
 // Dashboard específico para estudiantes con estilos mejorados
 
@@ -11,7 +11,8 @@ if ($userRole !== 'estudiante') {
 }
 
 // Get completed exams count for student
-function getCompletedExamsCount($studentId) {
+function getCompletedExamsCount($studentId)
+{
     try {
         $conn = getDbConnection();
         $stmt = $conn->prepare("SELECT COUNT(*) as count FROM resultados WHERE estudiante_id = ?");
@@ -23,7 +24,7 @@ function getCompletedExamsCount($studentId) {
         $result = $stmt->get_result();
         $row = $result->fetch_assoc();
         $conn->close();
-        
+
         return $row ? (int)$row['count'] : 0;
     } catch (Exception $e) {
         error_log("Error getting completed exams count: " . $e->getMessage());
@@ -32,13 +33,14 @@ function getCompletedExamsCount($studentId) {
 }
 
 // Get available exams for student (excluding completed ones)
-function getAvailableExamsCount($studentId) {
+function getAvailableExamsCount($studentId)
+{
     try {
         $conn = getDbConnection();
-        
+
         // Debug: First let's see what we have
         error_log("DEBUG: Getting available exams for student ID: " . $studentId);
-        
+
         // Usar la misma lógica que available_exams.php
         $stmt = $conn->prepare("
             SELECT COUNT(*) as count 
@@ -48,24 +50,24 @@ function getAvailableExamsCount($studentId) {
                 SELECT COALESCE(examen_id, 0) FROM resultados WHERE estudiante_id = ?
             )
         ");
-        
+
         if (!$stmt) {
             throw new Exception("Error preparing statement: " . $conn->error);
         }
-        
+
         $stmt->bind_param("i", $studentId);
         $stmt->execute();
         $result = $stmt->get_result();
         $row = $result->fetch_assoc();
-        
+
         $count = $row ? (int)$row['count'] : 0;
-        
+
         // Debug log
         error_log("DEBUG: Available exams count for student $studentId: " . $count);
-        
+
         $conn->close();
         return $count;
-        
+
     } catch (Exception $e) {
         error_log("Error getting available exams count: " . $e->getMessage());
         return 0;
@@ -73,33 +75,34 @@ function getAvailableExamsCount($studentId) {
 }
 
 // Get total exams count (for percentage calculation)
-function getTotalExamsCount() {
+function getTotalExamsCount()
+{
     try {
         $conn = getDbConnection();
-        
+
         // Usar la misma lógica que available_exams.php para consistencia
         $stmt = $conn->prepare("
             SELECT COUNT(*) as count 
             FROM examenes e
             JOIN usuarios u ON e.admin_id = u.id
         ");
-        
+
         if (!$stmt) {
             throw new Exception("Error preparing statement: " . $conn->error);
         }
-        
+
         $stmt->execute();
         $result = $stmt->get_result();
         $row = $result->fetch_assoc();
-        
+
         $count = $row ? (int)$row['count'] : 0;
-        
+
         // Debug log
         error_log("DEBUG: Total exams count: " . $count);
-        
+
         $conn->close();
         return $count;
-        
+
     } catch (Exception $e) {
         error_log("Error getting total exams count: " . $e->getMessage());
         return 0;
@@ -250,10 +253,10 @@ includeHeader('Dashboard Estudiante');
                                 <div>
                                     <small class="text-muted">Tu progreso</small>
                                     <div class="fw-bold">
-                                        <?php 
+                                        <?php
                                         $percentage = $totalExamsCount > 0 ? min(($completedExamsCount / $totalExamsCount) * 100, 100) : 0;
-                                        echo number_format($percentage, 1) . '% completado';
-                                        ?>
+                        echo number_format($percentage, 1) . '% completado';
+                        ?>
                                     </div>
                                     <small class="text-muted">
                                         <?php echo $completedExamsCount; ?> de <?php echo $totalExamsCount; ?> exámenes

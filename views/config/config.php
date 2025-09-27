@@ -1,4 +1,5 @@
 <?php
+
 // config/config.php
 
 // Error reporting configuration
@@ -56,64 +57,77 @@ define('PASSWORD_MIN_LENGTH', 6);
 date_default_timezone_set('America/Mexico_City');
 
 // Helper functions
-function isLoggedIn() {
+function isLoggedIn()
+{
     return isset($_SESSION['user_id']);
 }
 
-function getUserRole() {
+function getUserRole()
+{
     return $_SESSION['user_role'] ?? null;
 }
 
-function hasRole($role) {
+function hasRole($role)
+{
     return getUserRole() === $role;
 }
 
-function isAdmin() {
+function isAdmin()
+{
     return hasRole(ROLE_ADMIN);
 }
 
-function isProfesor() {
+function isProfesor()
+{
     return hasRole(ROLE_PROFESOR);
 }
 
-function isEstudiante() {
+function isEstudiante()
+{
     return hasRole(ROLE_ESTUDIANTE);
 }
 
-function redirectTo($url) {
+function redirectTo($url)
+{
     header("Location: " . $url);
     exit;
 }
 
-function requireLogin() {
+function requireLogin()
+{
     if (!isLoggedIn()) {
         redirectTo(BASE_URL . '/login.php');
     }
 }
 
-function requireRole($role) {
+function requireRole($role)
+{
     requireLogin();
     if (!hasRole($role)) {
         redirectTo(BASE_URL . '/views/dashboard.php');
     }
 }
 
-function sanitizeInput($input) {
+function sanitizeInput($input)
+{
     return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');
 }
 
-function formatDate($date, $format = 'Y-m-d H:i:s') {
+function formatDate($date, $format = 'Y-m-d H:i:s')
+{
     return date($format, strtotime($date));
 }
 
-function createAlert($type, $message) {
-    return '<div class="alert alert-' . $type . ' alert-dismissible fade show" role="alert">' 
-           . $message . 
+function createAlert($type, $message)
+{
+    return '<div class="alert alert-' . $type . ' alert-dismissible fade show" role="alert">'
+           . $message .
            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>';
 }
 
 // Check session timeout
-function checkSessionTimeout() {
+function checkSessionTimeout()
+{
     if (isLoggedIn()) {
         $lastActivity = $_SESSION['last_activity'] ?? time();
         if ((time() - $lastActivity) > SESSION_TIMEOUT) {
@@ -134,4 +148,3 @@ foreach ($directories as $dir) {
         mkdir($dir, 0755, true);
     }
 }
-?>

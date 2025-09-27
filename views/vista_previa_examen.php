@@ -16,21 +16,22 @@ define('DB_PASS', '123456789'); // Change in production
 define('DB_NAME', 'examenes_db');
 
 // Database connection function
-function getDbConnection() {
+function getDbConnection()
+{
     static $conn = null;
-    
+
     if ($conn === null) {
         $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-        
+
         // Check connection
         if ($conn->connect_error) {
             die("Error de conexión: " . $conn->connect_error);
         }
-        
+
         // Set charset
         $conn->set_charset("utf8mb4");
     }
-    
+
     return $conn;
 }
 
@@ -43,7 +44,8 @@ $conn = getDbConnection();
  * @param string $type The type of alert (success, danger, warning, info)
  * @return string HTML for the alert
  */
-function displayAlert($message, $type = 'info') {
+function displayAlert($message, $type = 'info')
+{
     return '<div class="alert alert-' . $type . ' alert-dismissible fade show" role="alert">
                 ' . $message . '
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -77,10 +79,10 @@ $result = $stmt->get_result();
 
 if ($result->num_rows > 0) {
     $examDetails = $result->fetch_assoc();
-    
+
     // Check if user can edit this exam (admin or creator)
     $canEdit = ($userRole === 'admin' || $examDetails['admin_id'] == $userId);
-    
+
     // If user is not admin and not the creator, check if they have access
     if (!$canEdit && $userRole === 'profesor') {
         // Check if the exam has been shared with this professor
@@ -93,13 +95,13 @@ if ($result->num_rows > 0) {
         $permissionStmt->bind_param("ii", $examId, $userId);
         $permissionStmt->execute();
         $permissionResult = $permissionStmt->get_result();
-        
+
         if ($permissionResult->num_rows > 0) {
             $canEdit = true;
         }
         $permissionStmt->close();
     }
-    
+
     // If student, check if they're allowed to view this exam
     if ($userRole === 'estudiante') {
         // Check if exam is published and available to students
@@ -124,7 +126,7 @@ if ($examDetails) {
     $stmtQuestions->bind_param("i", $examId);
     $stmtQuestions->execute();
     $questionsResult = $stmtQuestions->get_result();
-    
+
     while ($question = $questionsResult->fetch_assoc()) {
         $questions[] = $question;
     }
@@ -146,10 +148,14 @@ $totalCorrectD = 0;
 
 foreach ($questions as $question) {
     switch ($question['respuesta_correcta']) {
-        case 'A': $totalCorrectA++; break;
-        case 'B': $totalCorrectB++; break;
-        case 'C': $totalCorrectC++; break;
-        case 'D': $totalCorrectD++; break;
+        case 'A': $totalCorrectA++;
+            break;
+        case 'B': $totalCorrectB++;
+            break;
+        case 'C': $totalCorrectC++;
+            break;
+        case 'D': $totalCorrectD++;
+            break;
     }
 }
 ?>
@@ -374,13 +380,13 @@ foreach ($questions as $question) {
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php 
+                                <?php
                                 $halfCount = ceil(count($questions) / 2);
-                                for ($i = 0; $i < $halfCount; $i++): 
-                                    $secondIndex = $i + $halfCount;
-                                ?>
+                        for ($i = 0; $i < $halfCount; $i++):
+                            $secondIndex = $i + $halfCount;
+                            ?>
                                 <tr>
-                                    <td><?php echo ($i + 1); ?></td>
+                                    <td><?php echo($i + 1); ?></td>
                                     <td><?php echo $questions[$i]['respuesta_correcta']; ?></td>
                                     <td><?php echo isset($questions[$secondIndex]) ? ($secondIndex + 1) : ''; ?></td>
                                     <td><?php echo isset($questions[$secondIndex]) ? $questions[$secondIndex]['respuesta_correcta'] : ''; ?></td>
@@ -439,7 +445,7 @@ foreach ($questions as $question) {
                                 <div class="card mb-4 print-border">
                                     <div class="card-body">
                                         <h5 class="card-title">
-                                            <span class="question-number"><?php echo ($index + 1); ?>.</span>
+                                            <span class="question-number"><?php echo($index + 1); ?>.</span>
                                             <?php echo htmlspecialchars($question['enunciado']); ?>
                                         </h5>
                                         
@@ -487,14 +493,14 @@ foreach ($questions as $question) {
                     <div class="answer-submission-area print-border mt-4">
                         <h3 class="text-center mb-3">Hoja de Respuestas</h3>
                         <div class="row">
-                            <?php foreach ($questions as $index => $question): 
+                            <?php foreach ($questions as $index => $question):
                                 // Create a new row every 10 questions
                                 if ($index % 10 === 0 && $index > 0): ?>
                                 </div><div class="row">
                                 <?php endif; ?>
                                 <div class="col-md-3 col-6 mb-3">
                                     <div class="answer-group">
-                                        <span class="fw-bold"><?php echo ($index + 1); ?>.</span>
+                                        <span class="fw-bold"><?php echo($index + 1); ?>.</span>
                                         <div class="form-check form-check-inline">
                                             <label class="form-check-label">A ○</label>
                                         </div>
@@ -565,6 +571,6 @@ foreach ($questions as $question) {
     <?php
     // Close connection
     $conn->close();
-    ?>
+?>
 </body>
 </html>

@@ -1,4 +1,5 @@
 <?php
+
 // logout.php
 // Start session
 session_start();
@@ -12,4 +13,3 @@ session_destroy();
 // Redirect to logout confirmation page
 header("Location: logout_success.php");
 exit;
-?>
