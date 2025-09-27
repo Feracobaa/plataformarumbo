@@ -1,0 +1,181 @@
+/* index.css - Estilos específicos para la página de inicio */
+
+@import 'unified_styles.css';
+
+/* Layout de la página principal */
+body.index-page {
+    background-color: var(--bg-secondary);
+    min-height: 100vh;
+}
+
+/* Header y navegación */
+.main-header {
+    background: var(--bg-primary);
+    box-shadow: var(--shadow-light);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+}
+
+.nav-container {
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.nav-logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-decoration: none;
+}
+
+.nav-menu {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+}
+
+.nav-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.nav-link:hover {
+    color: var(--primary-color);
+}
+
+/* Sección Hero */
+.hero-section {
+    padding-top: 120px;
+    padding-bottom: 80px;
+    background: var(--primary-gradient);
+    color: white;
+}
+
+.hero-content {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+    animation: fadeInUp 0.5s ease-out;
+}
+
+.hero-title {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+}
+
+.hero-description {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+/* Sección de características */
+.features-section {
+    padding: 80px 0;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.feature-card {
+    padding: 2rem;
+    text-align: center;
+}
+
+.feature-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 1.5rem;
+    background: var(--primary-gradient);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+}
+
+.feature-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.feature-description {
+    color: var(--text-secondary);
+}
+
+/* Footer */
+.main-footer {
+    background: var(--bg-primary);
+    padding: 4rem 0;
+    margin-top: auto;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 3rem;
+}
+
+.footer-column h3 {
+    color: var(--text-primary);
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.footer-links {
+    list-style: none;
+}
+
+.footer-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    margin-bottom: 0.75rem;
+    display: block;
+    transition: var(--transition);
+}
+
+.footer-link:hover {
+    color: var(--primary-color);
+}
+
+/* Utilidades responsivas */
+@media (max-width: 768px) {
+    .nav-menu {
+        display: none;
+    }
+
+    .hero-title {
+        font-size: 2.5rem;
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+    }
+
+    .hero-buttons .btn {
+        width: 100%;
+    }
+}

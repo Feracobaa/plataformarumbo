@@ -1,0 +1,10 @@
+.exam-container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        .question-card { border: 2px solid #e9ecef; border-radius: 10px; padding: 30px; margin: 20px 0; }
+        .timer { position: fixed; top: 20px; right: 20px; background: #28a745; color: white; padding: 15px; border-radius: 8px; z-index: 1000; font-weight: bold; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        .progress-indicator { background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+        .answer-option { margin: 10px 0; padding: 15px; border: 2px solid #e9ecef; border-radius: 8px; cursor: pointer; transition: all 0.3s; }
+        .answer-option:hover { background: #f8f9fa; border-color: #007bff; }
+        .answer-option.selected { background: #e3f2fd; border-color: #007bff; }
+        .navigation-buttons { display: flex; justify-content: space-between; margin-top: 30px; }
+        body.exam-mode { background: #f8f9fa; }
+        .exam-card { background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }

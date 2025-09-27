@@ -1,0 +1,231 @@
+/* Unified Dashboard Styles - Bootstrap 5 compatible
+   Based on user's original `dashboard-styles.css` with additions for
+   educational UI components and Bootstrap 5-friendly compatibility.
+   (Original CSS uploaded by user retained and improved.)
+
+   Nota: enlaza Bootstrap 5 primero y después este CSS para que las
+   utilidades de bootstrap queden disponibles y los estilos personalizados
+   puedan sobreescribirlos.
+*/
+
+:root {
+    /* Color Palette */
+    --primary-color: #667eea;
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --primary-light: rgba(102, 126, 234, 0.08);
+    --primary-hover: #5a6fd8;
+    --secondary-color: #764ba2;
+    --success-color: #10b981;
+    --success-light: rgba(16, 185, 129, 0.08);
+    --error-color: #ef4444;
+    --error-light: rgba(239, 68, 68, 0.08);
+    --warning-color: #f59e0b;
+    --info-color: #3b82f6;
+
+    /* Text Colors */
+    --text-primary: #1f2937;
+    --text-secondary: #6b7280;
+    --text-light: #9ca3af;
+    --text-white: #ffffff;
+
+    /* Background Colors */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8fafc;
+    --bg-tertiary: #f1f5f9;
+    --bg-overlay: rgba(255, 255, 255, 0.95);
+    --bg-glass: rgba(255, 255, 255, 0.85);
+
+    /* Border & Shadows */
+    --border-color: #e5e7eb;
+    --border-light: #f3f4f6;
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+
+    /* Layout */
+    --border-radius: 12px;
+    --border-radius-sm: 8px;
+    --border-radius-lg: 16px;
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+
+    /* Transitions */
+    --transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Typography */
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+}
+
+/* --------------------------------------------------
+   Base / Layout
+   -------------------------------------------------- */
+* { box-sizing: border-box; }
+
+html, body { height: 100%; }
+body {
+    font-family: var(--font-family);
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    color: var(--text-primary);
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+
+/* Ensure Bootstrap's container utilities still work; add a dashboard-specific max width */
+.dashboard-container { max-width: 1200px; margin: 0 auto; padding: var(--spacing-xl) var(--spacing-md); }
+
+/* Subtle page background accents */
+body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background:
+        radial-gradient(circle at 20% 20%, rgba(102,126,234,0.07) 0%, transparent 45%),
+        radial-gradient(circle at 80% 80%, rgba(118,75,162,0.06) 0%, transparent 45%);
+}
+
+/* --------------------------------------------------
+   Navbar (compatible with Bootstrap 5 markup)
+   -------------------------------------------------- */
+.navbar-dashboard {
+    background: var(--bg-overlay);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-light);
+    box-shadow: var(--shadow-sm);
+}
+
+.navbar-dashboard .navbar-brand { font-weight: var(--font-weight-bold); color: var(--primary-color); }
+.navbar-dashboard .nav-link { color: var(--text-secondary); font-weight: var(--font-weight-medium); }
+.navbar-dashboard .nav-link:hover, .navbar-dashboard .nav-link.active { color: var(--primary-color); }
+
+/* Small visual badge for notifications */
+.nav-notif-badge { position: relative; }
+.nav-notif-badge .badge { position: absolute; top: -6px; right: -6px; }
+
+/* --------------------------------------------------
+   Cards & Surfaces (extend Bootstrap .card safely)
+   -------------------------------------------------- */
+.card-dashboard {
+    background: var(--bg-glass);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+    border: 1px solid rgba(255,255,255,0.12);
+    overflow: hidden;
+    transition: var(--transition);
+}
+.card-dashboard:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+.card-dashboard .card-header { background: transparent; border-bottom: none; }
+.card-dashboard .card-body { padding: var(--spacing-lg); }
+
+.card-accent-top { position: relative; }
+.card-accent-top::before { content: ''; position: absolute; left:0; right:0; top:0; height:4px; background: var(--primary-gradient); }
+
+/* User info card (teacher / student) */
+.user-info { display:flex; gap:var(--spacing-lg); align-items:center; }
+.user-avatar { width:64px; height:64px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:var(--font-weight-bold); border:3px solid rgba(255,255,255,0.12); background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)); }
+.user-details h3 { margin:0; font-size:1.125rem; }
+.user-role { display:inline-block; padding:0.125rem 0.5rem; border-radius:8px; font-size:0.75rem; text-transform:uppercase; }
+
+/* --------------------------------------------------
+   Buttons: Use Bootstrap's .btn-* and add dashboard helpers
+   -------------------------------------------------- */
+.btn-dash { border-radius: 10px; padding: .45rem 1rem; font-weight: var(--font-weight-medium); }
+.btn-dash-primary { background: var(--primary-gradient); color: var(--text-white); border: none; }
+.btn-dash-outline { background: transparent; border: 1.8px solid var(--primary-color); color: var(--primary-color); }
+
+/* Map older custom .btn interactions to Bootstrap buttons via utility classes */
+.btn-dash:focus-visible { outline: 3px solid rgba(102,126,234,0.15); outline-offset: 2px; }
+
+/* --------------------------------------------------
+   Stats Grid
+   -------------------------------------------------- */
+.stats-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap:var(--spacing-lg); }
+.stat-card { padding:var(--spacing-md); border-radius:var(--border-radius-sm); text-align:center; border:1px solid var(--border-light); }
+.stat-number { font-size:2rem; font-weight:var(--font-weight-bold); color:var(--primary-color); }
+.stat-label { color:var(--text-secondary); text-transform:uppercase; font-size:.8rem; }
+
+/* --------------------------------------------------
+   Educational components (new)
+   -------------------------------------------------- */
+
+/* Course card: shows course title, teacher, progress, quick actions */
+.course-card { display:flex; flex-direction:column; gap:.75rem; padding:1rem; border-radius:12px; background:var(--bg-primary); border:1px solid var(--border-light); }
+.course-card .course-title { font-weight:var(--font-weight-semibold); font-size:1.05rem; }
+.course-card .course-meta { color:var(--text-secondary); font-size:.9rem; }
+.course-card .course-progress { display:flex; align-items:center; gap:.75rem; }
+.course-card .progress { height:10px; background: var(--border-light); border-radius:999px; overflow:hidden; }
+.course-card .progress .progress-bar { background: linear-gradient(90deg, #667eea, #764ba2); }
+
+/* Assignment list (compact) */
+.assignment-list { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:.5rem; }
+.assignment-item { display:flex; justify-content:space-between; align-items:center; gap:1rem; padding:.5rem .75rem; border-radius:8px; background:var(--bg-secondary); }
+.assignment-item .due { font-size:.85rem; color:var(--text-secondary); }
+.assignment-item .status { font-weight:var(--font-weight-medium); font-size:.85rem; }
+
+/* Grade badge */
+.grade-badge { padding:.25rem .5rem; border-radius:8px; font-weight:600; }
+.grade-badge.A { background: rgba(16,185,129,0.12); color: var(--success-color); }
+.grade-badge.B { background: rgba(59,130,246,0.08); color: var(--info-color); }
+.grade-badge.C { background: rgba(245,158,11,0.08); color: var(--warning-color); }
+.grade-badge.D, .grade-badge.F { background: rgba(239,68,68,0.08); color: var(--error-color); }
+
+/* Attendance indicator */
+.attendance { display:flex; gap:.5rem; align-items:center; }
+.attendance-dot { width:10px; height:10px; border-radius:50%; }
+.attendance-dot.present { background: var(--success-color); }
+.attendance-dot.absent { background: var(--error-color); }
+
+/* Quick actions bar */
+.quick-actions { display:flex; gap:.5rem; flex-wrap:wrap; }
+.quick-action { padding:.5rem .75rem; border-radius:10px; background:var(--bg-secondary); border:1px solid var(--border-light); cursor:pointer; }
+
+/* Filters and search bar */
+.filter-bar { display:flex; gap:.5rem; align-items:center; flex-wrap:wrap; }
+.filter-bar .form-control { min-width:180px; }
+
+/* Calendar placeholder and chart container (for integration with FullCalendar / Chart.js) */
+.calendar-placeholder { min-height:220px; border-radius:12px; border:1px dashed var(--border-light); display:flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+.chart-container { min-height:250px; padding:1rem; border-radius:12px; background:var(--bg-primary); border:1px solid var(--border-light); }
+
+/* Gradebook table tweaks */
+.table-grade { width:100%; border-collapse:collapse; }
+.table-grade th, .table-grade td { padding:.6rem .75rem; text-align:left; border-bottom:1px solid var(--border-light); }
+.table-grade tr:hover { background: rgba(102,126,234,0.03); }
+
+/* Modals and forms: keep Bootstrap markup but make small visual tweaks */
+.form-group { margin-bottom:.75rem; }
+.form-label { font-weight:600; color:var(--text-primary); }
+
+/* Notifications (toast-like in dashboard style) */
+.toast-dash { position:fixed; right:1rem; bottom:1rem; z-index:1050; min-width:260px; border-radius:10px; box-shadow:var(--shadow-lg); }
+
+/* Accessibility helpers */
+.sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0; }
+
+/* --------------------------------------------------
+   Utility helpers and responsive
+   -------------------------------------------------- */
+.text-muted { color:var(--text-secondary) !important; }
+.center { text-align:center; }
+
+@media (max-width: 768px) {
+    .dashboard-container { padding:var(--spacing-lg); }
+    .user-info { flex-direction:column; align-items:center; text-align:center; }
+    .stats-grid { grid-template-columns: 1fr; }
+}
+
+@media (prefers-color-scheme: dark) {
+    :root { --text-primary: #f9fafb; --text-secondary:#d1d5db; --bg-primary:#0b1220; --bg-secondary:#081022; --border-light: rgba(255,255,255,0.04); }
+    body { background: linear-gradient(135deg, #0f1724 0%, #071025 100%); }
+}
+
+/* Print tweaks */
+@media print { .navbar-dashboard, .footer, .toast-dash { display:none !important; } }

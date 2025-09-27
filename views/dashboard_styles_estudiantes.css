@@ -1,0 +1,394 @@
+/* dashboard_styles.css - Estilos modernos para el dashboard del estudiante */
+
+:root {
+    --primary-color: #667eea;
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --secondary-color: #f093fb;
+    --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --success-color: #4ecdc4;
+    --success-gradient: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+    --warning-color: #ffeaa7;
+    --warning-gradient: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%);
+    --dark-color: #2d3436;
+    --light-bg: #f8f9fa;
+    --card-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    --card-shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.15);
+    --border-radius: 12px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Animaciones globales */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -468px 0;
+    }
+    100% {
+        background-position: 468px 0;
+    }
+}
+
+/* Body y layout general */
+body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    font-family: 'Roboto', sans-serif;
+    position: relative;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+.container-fluid {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    min-height: 100vh;
+    border-radius: 0;
+}
+
+/* Sidebar mejorado */
+.sidebar {
+    background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%) !important;
+    box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
+    border-right: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.sidebar .nav-link {
+    color: var(--dark-color);
+    padding: 12px 20px;
+    margin: 5px 10px;
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.sidebar .nav-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: var(--primary-gradient);
+    transition: var(--transition);
+    z-index: -1;
+}
+
+.sidebar .nav-link:hover::before,
+.sidebar .nav-link.active::before {
+    left: 0;
+}
+
+.sidebar .nav-link:hover,
+.sidebar .nav-link.active {
+    color: white;
+    transform: translateX(5px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+}
+
+.sidebar .nav-link i {
+    margin-right: 10px;
+    transition: var(--transition);
+}
+
+.sidebar .nav-link:hover i {
+    transform: scale(1.2);
+}
+
+/* Header del dashboard */
+.border-bottom {
+    border-bottom: 2px solid var(--primary-color) !important;
+    animation: slideInLeft 0.6s ease-out;
+}
+
+.h2 {
+    color: var(--dark-color);
+    font-weight: 700;
+    position: relative;
+    display: inline-block;
+}
+
+.h2::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background: var(--primary-gradient);
+    border-radius: 2px;
+}
+
+/* Cards mejoradas */
+.card {
+    border: none;
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    transition: var(--transition);
+    overflow: hidden;
+    position: relative;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: var(--primary-gradient);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--card-shadow-hover);
+}
+
+.card:nth-child(1)::before {
+    background: var(--primary-gradient);
+}
+
+.card:nth-child(2)::before {
+    background: var(--success-gradient);
+}
+
+.card:nth-child(3)::before {
+    background: var(--secondary-gradient);
+}
+
+.card-body {
+    padding: 2rem;
+    position: relative;
+}
+
+.card-title {
+    color: var(--dark-color);
+    font-weight: 600;
+    font-size: 1.3rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.card-text {
+    color: #6c757d;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+.card-text strong {
+    color: var(--dark-color);
+    font-weight: 600;
+}
+
+/* Botones mejorados */
+.btn-primary {
+    background: var(--primary-gradient);
+    border: none;
+    border-radius: 25px;
+    padding: 12px 25px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transition: all 0.6s ease;
+    transform: translate(-50%, -50%);
+}
+
+.btn-primary:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+/* Efectos de carga y shimmer */
+.card-loading {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+}
+
+/* Cards específicas con íconos */
+.card-info {
+    position: relative;
+}
+
+.card-info::after {
+    content: '\F470'; /* Bootstrap icon person */
+    font-family: 'bootstrap-icons';
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 2rem;
+    color: rgba(102, 126, 234, 0.2);
+    transition: var(--transition);
+}
+
+.card-exams::after {
+    content: '\F3E5'; /* Bootstrap icon file-text */
+    font-family: 'bootstrap-icons';
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 2rem;
+    color: rgba(78, 205, 196, 0.2);
+    transition: var(--transition);
+}
+
+.card-results::after {
+    content: '\F5A2'; /* Bootstrap icon trophy */
+    font-family: 'bootstrap-icons';
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 2rem;
+    color: rgba(240, 147, 251, 0.2);
+    transition: var(--transition);
+}
+
+.card:hover::after {
+    color: rgba(102, 126, 234, 0.4);
+    transform: scale(1.1);
+}
+
+/* Números destacados */
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: inline-block;
+    animation: pulse 2s infinite;
+}
+
+/* Row animations */
+.row > div {
+    animation-delay: calc(var(--animation-order, 0) * 0.1s);
+}
+
+.row > div:nth-child(1) {
+    --animation-order: 1;
+}
+
+.row > div:nth-child(2) {
+    --animation-order: 2;
+}
+
+.row > div:nth-child(3) {
+    --animation-order: 3;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1.5rem;
+    }
+    
+    .sidebar .nav-link {
+        padding: 10px 15px;
+        margin: 3px 5px;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+    }
+}
+
+/* Scrollbar personalizada */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-gradient);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-gradient);
+}
+
+/* Loading spinner */
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

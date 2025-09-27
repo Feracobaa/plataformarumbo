@@ -1,0 +1,173 @@
+/* unified_styles.css - Sistema de diseño unificado para la Plataforma Rumbo al Saber */
+
+/* Variables Globales */
+:root {
+    /* Colores Principales */
+    --primary-color: #667eea;
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --secondary-color: #f093fb;
+    --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    
+    /* Colores de Estado */
+    --success-color: #4ecdc4;
+    --success-gradient: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+    --error-color: #ef4444;
+    --warning-color: #f59e0b;
+    
+    /* Colores de Texto y Fondo */
+    --text-primary: #1f2937;
+    --text-secondary: #6b7280;
+    --text-light: #9ca3af;
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8fafc;
+    --dark-color: #2d3436;
+    --light-bg: #f8f9fa;
+    
+    /* Roles específicos */
+    --admin-color: #f59e0b;
+    --admin-gradient: linear-gradient(135deg, #f59e0b 0%, #f76b1c 100%);
+    
+    /* Elementos de UI */
+    --border-color: #e5e7eb;
+    --border-radius: 12px;
+    --card-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    --card-shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.12);
+    --shadow-light: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --shadow-medium: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-heavy: 0 20px 25px rgba(0, 0, 0, 0.1);
+    
+    /* Transiciones */
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Reset y Estilos Base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: var(--text-primary);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Animaciones Globales */
+@keyframes fadeInUp {
+    from { 
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Utilidades de Layout */
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.flex {
+    display: flex;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+/* Componentes Base */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    transition: var(--transition);
+    cursor: pointer;
+    border: none;
+    outline: none;
+}
+
+.btn-primary {
+    background: var(--primary-gradient);
+    color: white;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+.card {
+    background: var(--bg-primary);
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    transition: var(--transition);
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--card-shadow-hover);
+}
+
+/* Estilos de Formulario */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    transition: var(--transition);
+}
+
+.form-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+    outline: none;
+}
